@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "SJrDbdHIsuLPDwJqrZroftl3EfeBF/iKClHt/XFQ+WvzZCjU8G3+zKIy0lWurNSHfKa+DeT2/TOWBLQBQK8anw==",
+  "success": true,
+  "projectFilePath": "D:\\repos\\training_sessions\\rev030722\\day4\\EmployeeManagement\\EmployeeManagement.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jmetz\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.13\\microsoft.netcore.app.host.win-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}
