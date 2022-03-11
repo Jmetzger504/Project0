@@ -20,7 +20,6 @@ class Accounts {
         public void withdraw(double amount) {
             amount = Math.Round(amount,2);
             this.balance -= amount;
-            Console.WriteLine("Your new balance after the withdrawl is: " + this.balance);
             
         }
 
@@ -31,7 +30,7 @@ class Accounts {
         public void deposit(double amount) {
             amount = Math.Round(amount,2);
             this.balance += amount;
-            Console.WriteLine("Your new balance after the deposit is: " + this.balance);
+
         }
 
         #endregion deposit
