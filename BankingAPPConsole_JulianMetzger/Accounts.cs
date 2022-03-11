@@ -4,94 +4,57 @@ class Accounts {
 
     #region Properties
 
-        int accNo;
-        string accName;
-        string accType;
-        double accBalance;
-        bool accIsActive = true;
-        string accEmail;
-
-    #endregion
-
-    #region Gets/Sets
-
-        public int AccountNumber {
-
-            get{return accNo;}
-            set {accNo = value;}
-
-        }
-
-        public string AccountName {
-
-            get{return accName;}
-            set{accName = value;}
-
-        }
-
-        public string AccountType {
-
-            get{return accType;}
-            set{accType = value;}
-
-        }
-
-        public double AccountBalance {
-
-            get{return accBalance;}
-            set {accBalance = Math.Round(value,2);}
-
-        }
-
-        public bool isAccountActive {
-
-            get{return accIsActive;}
-            set{accIsActive = value;}
-
-        }
-
-        public string AccountEmail {
-
-            get{return accEmail;}
-            set{accEmail = value;}
-
-        }
+    public int number { get; set; }
+    public string name { get; set; }
+    public string type { get; set; }
+    public double balance { get; set; }
+    public bool isActive { get; set; }
+    public string email { get; set; }
 
     #endregion
 
     #region Account Methods
 
         #region withdrawl
+
         public void withdraw(double amount) {
             amount = Math.Round(amount,2);
-            AccountBalance -= amount;
-            Console.WriteLine("Your new balance after the withdrawl is: " + AccountBalance);
+            this.balance -= amount;
+            Console.WriteLine("Your new balance after the withdrawl is: " + this.balance);
+            
         }
-        #endregion
+
+        #endregion withdrawl
 
         #region deposit
+
         public void deposit(double amount) {
             amount = Math.Round(amount,2);
-            AccountBalance += amount;
-            Console.WriteLine("Your new balance after the deposit is: " + AccountBalance);
+            this.balance += amount;
+            Console.WriteLine("Your new balance after the deposit is: " + this.balance);
         }
-        #endregion
-        #region AccountDetails
-        public void getAccountDetails() {
-            Console.WriteLine("Account No: " + AccountNumber);
-            Console.WriteLine("Name: " + AccountName);
-            Console.WriteLine("Type: " + AccountType);
-            Console.WriteLine("Balance: " + AccountBalance);
-            Console.WriteLine("Email: " + AccountEmail);
-        }
-        #endregion
-        
-        #region checkBalance
-        public void CheckBalance() {
-            Console.WriteLine("Your current account balance: $" + AccountBalance);
-        }
-        #endregion
 
-    #endregion
+        #endregion deposit
+
+        #region AccountDetails
+
+            public void getAccountDetails() {
+                Console.WriteLine("Account No: " + number);
+                Console.WriteLine("Name: " + name);
+                Console.WriteLine("Type: " + type);
+                Console.WriteLine("Balance: " + balance);
+                Console.WriteLine("Email: " + email);
+            }
+
+        #endregion AccountDetails
+            
+        #region checkBalance
+            public void CheckBalance() {
+                Console.WriteLine("Your current account balance: $" + balance);
+            }
+
+        #endregion checkBalance
+
+    #endregion AccountMethods
 
 }

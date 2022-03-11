@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\repos\\revatureProjects\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj": {}
+    "D:\\repos\\revatureProjects\\Project0\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj": {}
   },
   "projects": {
-    "D:\\repos\\revatureProjects\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj": {
+    "D:\\repos\\revatureProjects\\Project0\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repos\\revatureProjects\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj",
+        "projectUniqueName": "D:\\repos\\revatureProjects\\Project0\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj",
         "projectName": "BankingAPPConsole_JulianMetzger",
-        "projectPath": "D:\\repos\\revatureProjects\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj",
+        "projectPath": "D:\\repos\\revatureProjects\\Project0\\BankingAPPConsole_JulianMetzger\\BankingAPPConsole_JulianMetzger.csproj",
         "packagesPath": "C:\\Users\\jmetz\\.nuget\\packages\\",
-        "outputPath": "D:\\repos\\revatureProjects\\BankingAPPConsole_JulianMetzger\\obj\\",
+        "outputPath": "D:\\repos\\revatureProjects\\Project0\\BankingAPPConsole_JulianMetzger\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\jmetz\\AppData\\Roaming\\NuGet\\NuGet.Config",
