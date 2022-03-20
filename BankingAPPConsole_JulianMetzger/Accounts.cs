@@ -2,8 +2,9 @@ using System;
 
 class Accounts {
 
-    #region Properties
+    public static int accNo = 1;
 
+    #region Properties
     public int number { get; set; }
     public string name { get; set; }
     public string type { get; set; }
@@ -48,8 +49,8 @@ class Accounts {
         #endregion AccountDetails
             
         #region checkBalance
-            public void CheckBalance() {
-                Console.WriteLine("Your current account balance: $" + balance);
+            public void checkBalance() {
+                Console.WriteLine("Your current account balance: " + balance.ToString("C"));
             }
 
         #endregion checkBalance

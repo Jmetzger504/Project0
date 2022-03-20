@@ -10,12 +10,19 @@ Implement:
     *getAccountDetails
     *checkBalance
     *Exit
+    *Database accType shorthand -> Full string for UI.
     Double check region bounds.
+SQL Database Implementation:
+    Connect to server.
+    Load Jeff Bezos Object
+    Query accounts
+    Sort accounts
+    Switch accounts
+    Email/Password to load each account.
 Optional: difficulty impossible(?) -> easy.
     Switching accounts via OOP.
     *Cancel button in submenu control flow.
-    XML serialization
-    Currency formatting
+    *Currency formatting
     Email verification
 */
 
@@ -102,7 +109,14 @@ namespace BankingAPPConsole_JulianMetzger {
                                 else {
                                     menu();
                                     Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
-                                    Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):\n");
+                                    Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):");
+                                    Console.WriteLine("Account Balance: " + account.balance);
+                                }
+                                if(amount > account.balance) {
+                                    validInput = false;
+                                    menu();
+                                    Console.WriteLine("We're sorry, you can't overdraw your account.");
+                                    Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):");
                                     Console.WriteLine("Account Balance: " + account.balance);
                                 }
                             }while(!validInput);
@@ -189,7 +203,7 @@ namespace BankingAPPConsole_JulianMetzger {
                     else if(validatedInput == 4) {
                         #region Account Balance
                             menu();
-                            account.getAccountDetails();
+                            account.checkBalance();
                             Console.Write("Press enter to return to the main menu.");
                             Console.ReadLine();
 
@@ -199,7 +213,10 @@ namespace BankingAPPConsole_JulianMetzger {
                     else if (validatedInput == 5) {
                         #region Create Account
                             menu();
-                            Console.WriteLine("Account Name: Jeff Bezos");
+                            Console.Write("Account Name: ");
+                            account.name = Console.ReadLine();
+
+                            menu();
                             Console.WriteLine("What type of account would you like to make today?");
                             Console.WriteLine("'c' for checking, 's' for savings");
 
@@ -230,7 +247,7 @@ namespace BankingAPPConsole_JulianMetzger {
                             menu();
                             Console.WriteLine("Account Name: " + account.name);
                             Console.WriteLine("Account Type: " + account.type);
-                            Console.WriteLine("Please input your initial deposit: ");
+                            Console.Write("Please input your initial deposit: $");
                             validInput = false;
 
                             do {
@@ -243,7 +260,7 @@ namespace BankingAPPConsole_JulianMetzger {
                                     Console.WriteLine("Account Name: " + account.name);
                                     Console.WriteLine("Account Type: " + account.type);
                                     Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
-                                    Console.WriteLine("Please input your initial deposit: ");
+                                    Console.Write("Please input your initial deposit: $");
                                     
                                 }
                             }while(!validInput);
@@ -255,18 +272,19 @@ namespace BankingAPPConsole_JulianMetzger {
                             Console.WriteLine("Account Name: " + account.name);
                             Console.WriteLine("Account Type: " + account.type);
                             Console.WriteLine("Initial Deposit: " + account.balance);
-                            Console.WriteLine("Please input a valid email for this account:");
+                            Console.Write("Please input a valid email for this account:");
                             account.email = Console.ReadLine();
 
                             //Finalize and return to main menu.
-                            Random rand = new Random();
-                            account.number = rand.Next(2,99999999); 
+                            Accounts.accNo++;
+                            account.number = Accounts.accNo;
                             account.isActive = true;
                             menu();
                             Console.WriteLine("Account Name: " + account.name);
+                            Console.WriteLine("Email: " + account.email);
                             Console.WriteLine("Account No: " + account.number.ToString("D8"));
                             Console.WriteLine("Account Type: " + account.type);
-                            Console.WriteLine("Initial Deposit: " + account.balance);
+                            Console.WriteLine("Initial Deposit: " + account.balance.ToString("C2"));
                             Console.WriteLine("Activation status: Active");
                             Console.WriteLine("Thank you for configuring an account with us!");
                             Console.WriteLine("Press enter to continue");
