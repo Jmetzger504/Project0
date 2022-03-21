@@ -30,3 +30,10 @@ D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net
 D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\ref\BankingAPPConsole_JulianMetzger.dll
 D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\BankingAPPConsole_JulianMetzger.pdb
 D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\obj\Debug\net5.0\BankingAPPConsole_JulianMetzger.genruntimeconfig.cache
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\System.Data.SqlClient.dll
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\runtimes\win-arm64\native\sni.dll
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\runtimes\win-x64\native\sni.dll
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\runtimes\win-x86\native\sni.dll
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
+D:\repos\revatureProjects\Project0\BankingAPPConsole_JulianMetzger\obj\Debug\net5.0\BankingAPPConsole_JulianMetzger.csproj.CopyComplete
