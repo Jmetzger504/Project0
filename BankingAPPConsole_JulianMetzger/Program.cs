@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 /*TODO: 
 Implement:
     *Initialize default account.
@@ -14,20 +13,22 @@ Implement:
     *Double check region bounds.
 SQL Database Implementation:
     *Connect to local server.
-    Login/New Account
-    Fix accNo
-    Reflect Deposit/Withdrawl in database table.
+    *Login/New Account
+    *Get accNo from database.
+    *Reflect Withdrawl in database table.
+    *Reflect Deposit in database table.
     *Query accounts
-    Switch accounts
-    Delete account
-    Deactivate account
-    Deactivated account widthdraw/deposit check.
+    Switch accounts/Logout
+    *Deactivate account
+    Delete Account (admin only?)
+    *Deactivated account withdraw/deposit check.
     *Email/Password to load each account.
 Optional: difficulty impossible(?) -> easy.
+    Admin account that can view all accounts.
     *Cancel button in submenu control flow.
     *Currency formatting
-    Check for proper withdrawl,deposit truncation
-    Email verification
+    *Check for proper withdrawl,deposit truncation
+    Email regex verification
 */
 
 namespace BankingAPPConsole_JulianMetzger {
@@ -59,7 +60,7 @@ namespace BankingAPPConsole_JulianMetzger {
                     newAccount = false;
                     servicingCustomer = true;
 
-                }//New account chosen
+                }//New account chosen. Logged in after.
                 else if(firstStep == "2") {
                     loggingIn = false;
                     newAccount = true;
@@ -82,13 +83,13 @@ namespace BankingAPPConsole_JulianMetzger {
                 while(newAccount) {
                     
 
-                    //Acquire account email.
+                    //Acquire account email. Make sure it's unique!
                     bool uniqueEmail = false;
                     while(!uniqueEmail) {
                         menu();
                         Console.Write("Please input a valid, unique email for this account:");
                         account.email = Console.ReadLine();
-                        if(account.successfulLogin())
+                        if(account.checkEmail())
                             uniqueEmail = true;
                     }
                     
@@ -97,7 +98,7 @@ namespace BankingAPPConsole_JulianMetzger {
                     account.getInitializedDetails();
                     
                     Console.Write("Please input a password of your choosing: ");
-                    string password = Console.ReadLine();
+                    account.password = Console.ReadLine();
 
                     //Acquire account name.
                     menu();
@@ -157,23 +158,17 @@ namespace BankingAPPConsole_JulianMetzger {
                     amount = Math.Round(amount,2,MidpointRounding.ToZero);
                     account.balance = amount;
 
+                    //Save valid account to database
+                    account.saveNewAccount();
+                   
+
 
                     //Finalize and return to main menu.
-
-                    //**FIX ME
-                    // Accounts.accNo++;
-                    // account.number = Accounts.accNo;
-                    account.isActive = true;
                     menu();
-                    Console.WriteLine("Account Name: " + account.name);
-                    Console.WriteLine("Email: " + account.email);
-                    Console.WriteLine("Account No: " + account.number.ToString("D8"));
-                    Console.WriteLine("Account Type: " + account.type);
-                    Console.WriteLine("Initial Deposit: " + account.balance.ToString("C2"));
-                    Console.WriteLine("Activation status: Active");
-                    Console.WriteLine("Thank you for configuring an account with us!");
-                    Console.WriteLine("Press enter to continue");
+                    account.isActive = true;
+                    account.getAccountDetails();
                     Console.ReadLine();
+                    newAccount = false;
                 }
                 //Login selected
                 while(loggingIn){
@@ -207,7 +202,9 @@ namespace BankingAPPConsole_JulianMetzger {
                                 Console.ReadLine();
                             }
                             else {
-                            
+                                Console.WriteLine("Login unsuccesful. Your credentials were invalid.");
+                                Console.WriteLine("Press enter to try again.");
+                                Console.ReadLine();
                             }
                         }
                         
@@ -223,10 +220,11 @@ namespace BankingAPPConsole_JulianMetzger {
                     menu();
                     Console.WriteLine("1. Withdraw");
                     Console.WriteLine("2. Deposit");
-                    Console.WriteLine("3. Account Details.");
-                    Console.WriteLine("4. Account Balance.");
-                    Console.WriteLine("5: Create a New Account");
+                    Console.WriteLine("3. Account Details");
+                    Console.WriteLine("4. Account Balance");
+                    Console.WriteLine("5: Account Activation Status");
                     Console.WriteLine("6: Exit");
+                    Console.WriteLine("42: Delete Account");
 
                     //Receive and validate user input
                     bool validInput = false;
@@ -236,17 +234,18 @@ namespace BankingAPPConsole_JulianMetzger {
                     do {
                         string input = Console.ReadLine();
                         //Validate integer in [1,5].
-                        if(Int32.TryParse(input,out validatedInput) && validatedInput <= 6 && validatedInput >= 1)
+                        if(Int32.TryParse(input,out validatedInput) && validatedInput <= 6 && validatedInput >= 1 || validatedInput == 42)
                             validInput = true;
                         else {
                             menu();
                             Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
                             Console.WriteLine("1. Withdraw");
                             Console.WriteLine("2. Deposit");
-                            Console.WriteLine("3. Account details.");
-                            Console.WriteLine("4. Account balance.");
-                            Console.WriteLine("5: Create a New Account");
+                            Console.WriteLine("3. Account details");
+                            Console.WriteLine("4. Account balance");
+                            Console.WriteLine("5: Account Activation Status");
                             Console.WriteLine("6: Exit");
+                            Console.WriteLine("42: Delete Account");
                         }
                     }while(!validInput);
 
@@ -255,49 +254,57 @@ namespace BankingAPPConsole_JulianMetzger {
                     //Withdrawl
                     if(validatedInput == 1) {
                         #region Withdrawl
-                            //Menu
-                            menu();
-                            Console.WriteLine("Please input how much you would like to withdraw: ('c' to cancel) ");
-                            account.checkBalance();
+                            
+                            if(account.isActive) {
 
-                            //Validate input.
-                            validInput = false;
-                            validatedInput = 0;
-                            amount = 0;
-                            do {
-                                string input = Console.ReadLine();
-                                //Validate for an integer > 0 or cancel command.
-                                if(Double.TryParse(input,out amount) && amount > 0 || input.ToLower() == "c")
-                                    validInput = true;
-                                else {
-                                    menu();
-                                    Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
-                                    Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):");
-                                    account.checkBalance();
-                                }
-                                if(amount > account.balance) {
-                                    validInput = false;
-                                    menu();
-                                    Console.WriteLine("We're sorry, you can't overdraw your account.");
-                                    Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):");
-                                    account.checkBalance();
-                                }
-                            }while(!validInput);
-
-                            //Check for valid withdawl (input isn't 'c')
-                            if(amount > 0) {
-                                //Transaction
-                                amount = Math.Round(amount,2,MidpointRounding.ToZero);
-                                account.withdraw(amount);
-                                //Confirmation
                                 menu();
-                                Console.WriteLine(amount + " withdrawn.");
+                                Console.WriteLine("Please input how much you would like to withdraw: ('c' to cancel) ");
                                 account.checkBalance();
 
-                                //Prompt to return to main menu
-                                Console.WriteLine("Please press enter to continue.");
+                                validInput = false;
+                                validatedInput = 0;
+                                amount = 0;
+                                //Validate input.
+                                do {
+                                    string input = Console.ReadLine();
+                                    //Validate for an integer > 0 or cancel command.
+                                    if(Double.TryParse(input,out amount) && amount > 0 || input.ToLower() == "c")
+                                        validInput = true;
+                                    else {
+                                        menu();
+                                        Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
+                                        Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):");
+                                        account.checkBalance();
+                                    }
+                                    if(amount > account.balance) {
+                                        validInput = false;
+                                        menu();
+                                        Console.WriteLine("We're sorry, you can't overdraw your account.");
+                                        Console.WriteLine("Please input how much you would like to withdraw: (press 'c' to cancel):");
+                                        account.checkBalance();
+                                    }
+                                }while(!validInput);
+
+                                //Check for valid withdawl (input isn't 'c')
+                                if(amount > 0) {
+                                    //Transaction
+                                    amount = Math.Round(amount,2,MidpointRounding.ToZero);
+                                    account.withdraw(amount);
+                                    //Confirmation
+                                    menu();
+                                    Console.WriteLine(amount.ToString("C2") + " withdrawn.");
+                                    account.checkBalance();
+
+                                    //Prompt to return to main menu
+                                    Console.WriteLine("Please press enter to return to the main menu.");
+                                    Console.ReadLine();
+                                } 
+                            }
+                            else {
+                                menu();
+                                Console.WriteLine("Sorry, your account is currently deactivated. Reactivate your account to perform transactions.");
+                                Console.WriteLine("Please press enter to return to the main menu.");
                                 Console.ReadLine();
-                                
                             }
                             //Else Return to main menu.
                         #endregion Withdrawl
@@ -305,42 +312,50 @@ namespace BankingAPPConsole_JulianMetzger {
                     //Deposit
                     else if(validatedInput == 2) {
                         #region Deposit
-                            //Menu
-                            menu();
-                            Console.WriteLine("Please input how much you would like to deposit: ('c' to cancel) ");
-
-                            //Validate input.
-                            validInput = false;
-                            validatedInput = 0;
-                            amount = 0;
-
-                            
-                            do {
-                                string input = Console.ReadLine();
-                                //Validate for an integer > 0 or cancel command.
-                                if(Double.TryParse(input,out amount) && amount > 0 || input.ToLower() == "c")
-                                    validInput = true;
-                                else {
-                                    menu();
-                                    Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
-                                    Console.WriteLine("Please input how much you would like to deposit: (press 'c' to cancel):\n");
-                                    account.checkBalance();
-                                }
-                            }while(!validInput);
-
-                             //Check for valid withdawl
-                            if(amount > 0) {
-                                //Transaction
-                                amount = Math.Round(amount,2,MidpointRounding.ToZero);
-                                account.deposit(amount);
-                                //Confirmation
+                            if(account.isActive) {
+                                //Menu
                                 menu();
-                                Console.WriteLine(amount + " deposited.");
-                                account.checkBalance();
+                                Console.WriteLine("Please input how much you would like to deposit: ('c' to cancel) ");
 
-                                //Prompt to return to main menu
+                                //Validate input.
+                                validInput = false;
+                                validatedInput = 0;
+                                amount = 0;
+
+                                
+                                do {
+                                    string input = Console.ReadLine();
+                                    //Validate for an integer > 0 or cancel command.
+                                    if(Double.TryParse(input,out amount) && amount > 0 || input.ToLower() == "c")
+                                        validInput = true;
+                                    else {
+                                        menu();
+                                        Console.WriteLine("We're sorry, you seem to have given an unexecutable command.");
+                                        Console.WriteLine("Please input how much you would like to deposit: (press 'c' to cancel):\n");
+                                        account.checkBalance();
+                                    }
+                                }while(!validInput);
+
+                                //Check for valid withdrawl
+                                if(amount > 0) {
+                                    //Transaction
+                                    amount = Math.Round(amount,2,MidpointRounding.ToZero);
+                                    account.deposit(amount);
+                                    //Confirmation
+                                    menu();
+                                    Console.WriteLine(amount.ToString("C2") + " deposited.");
+                                    account.checkBalance();
+
+                                    //Prompt to return to main menu
+                                    Console.WriteLine("Please press enter to return to the main menu.");
+                                    Console.ReadLine();  
+                                }
+                            }
+                            else {
+                                menu();
+                                Console.WriteLine("Sorry, your account is currently deactivated. Reactivate your account to perform transactions.");
                                 Console.WriteLine("Please press enter to return to the main menu.");
-                                Console.ReadLine();  
+                                Console.ReadLine();
                             }
                             //Else return to main menu.
 
@@ -369,31 +384,116 @@ namespace BankingAPPConsole_JulianMetzger {
 
                         #endregion Account Balance
                     }
-                    //Deactivate Account
+                    //Toggle Account Activation Status.
                     else if (validatedInput == 5) {
-                        #region Deactivate Account
-                            bool deactivating = false;
+                        #region Account Status
+                            bool loop = false;
                             do {
+                                if(account.isActive) {
+                                    menu();
+                                    Console.WriteLine("Account Status: Active");
+                                    Console.WriteLine("Would you like to deactivate your account? (y/n))");
+                                    Console.WriteLine("WARNING: Deactivating your account will freeze all transactions until the account is reactivated.");
+                                }
+                                else {
+                                    menu();
+                                    Console.WriteLine("Account Status: Inactive");
+                                    Console.WriteLine("Would you like to reactivate your account? (y/n)");
+                                    Console.WriteLine("NOTE: Reactivating your account will open your account to new transactions.");
+                                }
 
-                                //Implement me!!
-                                deactivating = true;
+                                string response = Console.ReadLine();
 
-                            }while(deactivating);
+                                if(response.ToLower() == "y") {
+                                    
+                                    loop = false;
+                                    bool unconfirmed = true;
+                                    while(unconfirmed) {
+                                        Console.Write("Please input your password to confirm: ('c') to cancel ");
+                                        string password = Console.ReadLine();
+                                        if(password == account.password) {
+                                            account.isActive = !account.isActive;
+                                            unconfirmed = false;
+                                            account.updateAccountStatus();
+                                        }
+                                        else if(password.ToLower() == "c")
+                                            unconfirmed = false;
 
-                        #endregion Deactivate Account
+                                    }
+                                    menu();
+                                    if(account.isActive)
+                                        Console.WriteLine("Account Status: Active");
+                                    else 
+                                        Console.WriteLine("Account Status: Inactive");
+                                    Console.WriteLine("Press enter to return to the main menu.");
+                                    Console.ReadLine();
+                                }
+                                else if(response.ToLower() == "n") {
+                                    loop = false;
+                                }
+                                else loop = true;
+                               
+                                
+
+                            }while(loop);
+
+                        #endregion Account Status
                     }
                     //Exit 
                     else if(validatedInput == 6) {
                         #region Exit Routine
                             servicingCustomer = false;
-                            Console.Clear();
-                            Console.WriteLine("~------Metzger Banking------~");
+                            menu();
                             Console.WriteLine("Thank you for banking with us today!");
                             Console.Write("Press enter to exit.");
                             Console.ReadLine();
                             Console.Clear();
 
                         #endregion Exit Routine
+                    }
+                    //Delete Account
+                    else if (validatedInput == 42) {
+                        bool delete = true;
+                        while(delete) {
+                            menu();
+                            Console.WriteLine("Would you like to delete your account? (y/n)");
+                            Console.WriteLine("WARNING: THIS PROCESS CANNOT BE UNDONE ONCE PERFORMED.");
+                            Console.WriteLine("YOU WILL BE ASKED TO SUPPLY A ROUTING NUMBER TO TRANSFER ANY FUNDS IN YOUR ACCOUNT");
+                            Console.WriteLine("ALL NON-TRANSFERRED FUNDS MUST BE WITHDRAWN BY THE END OF THE NEXT WORK WEEK OR THEY WILL BE LOST.");
+                            Console.WriteLine("YOU WILL BE ASKED FOR YOUR PASSWORD TO CONFIRM.");
+                            string response = Console.ReadLine();
+
+                            if(response.ToLower() == "n")
+                                delete = false;
+                            else if(response.ToLower() == "y") {
+                                menu();
+                                Console.WriteLine("WARNING: THIS PROCESS CANNOT BE UNDONE ONCE PERFORMED.");
+                                Console.WriteLine("ALL NON-TRANSFERRED FUNDS MUST BE WITHDRAWN BY THE END OF THE NEXT WORK WEEK OR THEY WILL BE LOST.");
+                                Console.Write("Please input your password to confirm you want to delete your account. Press Enter to cancel. ");
+                                string password = Console.ReadLine();
+                                if(password == account.password) {
+                                    menu();
+                                    Console.WriteLine("WARNING: THIS PROCESS CANNOT BE UNDONE ONCE PERFORMED.");
+                                    Console.WriteLine("ALL NON-TRANSFERRED FUNDS MUST BE WITHDRAWN BY THE END OF THE NEXT WORK WEEK OR THEY WILL BE LOST.");
+                                    Console.Write("Please type your password again to confirm. Press Enter to cancel. ");
+                                    password = Console.ReadLine();
+                                    if(password == account.password) {
+                                        account.deleteAccount();
+                                        delete = false;
+                                        servicingCustomer = false;
+                                        menu();
+                                        Console.WriteLine("Account successfully deleted. Application Closing.");
+                                        Console.ReadLine();
+                                    }
+                                    else {
+                                        delete = false;
+                                    }
+                                }
+                                else {
+                                    delete = false;
+                                }
+                            }
+                        }
                     }
                 }
             #endregion Customer Service
