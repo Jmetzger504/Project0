@@ -12,18 +12,19 @@ Implement:
     *Database accType shorthand -> Full string for UI.
     *Double check region bounds.
 SQL Database Implementation:
+    Check email/password via count executescalar
     *Connect to local server.
     *Login/New Account
     *Get accNo from database.
     *Reflect Withdrawl in database table.
     *Reflect Deposit in database table.
     *Query accounts
-    Switch accounts/Logout
     *Deactivate account
-    Delete Account (admin only?)
+    *Delete Account 
     *Deactivated account withdraw/deposit check.
     *Email/Password to load each account.
 Optional: difficulty impossible(?) -> easy.
+    Switch accounts/Logout
     Admin account that can view all accounts.
     *Cancel button in submenu control flow.
     *Currency formatting

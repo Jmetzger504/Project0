@@ -24,4 +24,4 @@ select top 1 Id from accountDetails order by Id desc;
 
 select * from accountDetails;
 
-insert into accountDetails values('Jeff','c',1,1,'Jmetzger5@gmail.com','pass');i
+insert into accountDetails values('Jeff','c',1,1,'Jmetzger5@gmail.com','pass');
